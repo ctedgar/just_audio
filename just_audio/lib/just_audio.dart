@@ -3190,6 +3190,8 @@ _ProxyHandler _proxyHandlerForUri(
       });
       request.response.statusCode = originResponse.statusCode;
 
+      debugPrint('Origin request headers: $requestHeaders');
+
       // Send response
       if (headers != null && request.uri.path.toLowerCase().endsWith('.m3u8') ||
           ['application/x-mpegURL', 'application/vnd.apple.mpegurl']
