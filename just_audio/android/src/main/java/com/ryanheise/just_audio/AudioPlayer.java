@@ -615,20 +615,20 @@ public class AudioPlayer implements MethodCallHandler, Player.Listener, Metadata
         String id = (String)map.get("id");
         switch ((String)map.get("type")) {
         case "progressive":
-            return new ProgressiveMediaSource.Factory(buildDataSourceFactory(mapGet(map, "headers")), buildExtractorsFactory(mapGet(map, "options")))
+            return new ProgressiveMediaSource.Factory(buildDataSourceFactory(mapGet(map, "headers"), mapGet(map, "timeoutMillis")), buildExtractorsFactory(mapGet(map, "options")))
                     .createMediaSource(new MediaItem.Builder()
                             .setUri(Uri.parse((String)map.get("uri")))
                             .setTag(id)
                             .build());
         case "dash":
-            return new DashMediaSource.Factory(buildDataSourceFactory(mapGet(map, "headers")))
+            return new DashMediaSource.Factory(buildDataSourceFactory(mapGet(map, "headers"), mapGet(map, "timeoutMillis")))
                     .createMediaSource(new MediaItem.Builder()
                             .setUri(Uri.parse((String)map.get("uri")))
                             .setMimeType(MimeTypes.APPLICATION_MPD)
                             .setTag(id)
                             .build());
         case "hls":
-            return new HlsMediaSource.Factory(buildDataSourceFactory(mapGet(map, "headers")))
+            return new HlsMediaSource.Factory(buildDataSourceFactory(mapGet(map, "headers"), mapGet(map, "timeoutMillis")))
                     .createMediaSource(new MediaItem.Builder()
                             .setUri(Uri.parse((String)map.get("uri")))
                             .setMimeType(MimeTypes.APPLICATION_M3U8)
@@ -709,7 +709,7 @@ public class AudioPlayer implements MethodCallHandler, Player.Listener, Metadata
         audioEffectsMap.clear();
     }
 
-    private DataSource.Factory buildDataSourceFactory(Map<?, ?> headers) {
+    private DataSource.Factory buildDataSourceFactory(Map<?, ?> headers, Integer timeoutMillis) {
         final Map<String, String> stringHeaders = castToStringMap(headers);
         String userAgent = null;
         if (stringHeaders != null) {
@@ -726,6 +726,11 @@ public class AudioPlayer implements MethodCallHandler, Player.Listener, Metadata
             .setAllowCrossProtocolRedirects(true);
         if (stringHeaders != null && stringHeaders.size() > 0) {
             httpDataSourceFactory.setDefaultRequestProperties(stringHeaders);
+        }
+        //Default for both timeout setting is 8 seconds, so using timeoutMillis to control both
+        if(timeoutMillis!=null){
+            httpDataSourceFactory.setConnectTimeoutMs(timeoutMillis);
+            httpDataSourceFactory.setReadTimeoutMs(timeoutMillis);
         }
         return new DefaultDataSource.Factory(context, httpDataSourceFactory);
     }

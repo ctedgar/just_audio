@@ -1,3 +1,8 @@
+## 0.9.44
+
+* Add timeoutMillis parameter to Uri/LockCaching/Stream AudioSources (@ctedgar).
+  * Android platform implementation completed
+
 ## 0.9.43
 
 * Fix NPE in load on iOS/macOS.
