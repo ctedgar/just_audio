@@ -1,3 +1,7 @@
+## 4.3.1
+
+* Add timeoutMillis to UriAudioSourceMessage (@ctedgar).
+
 ## 4.3.0
 
 * Add setWebCrossOrigin for CORS on web (@danielwinkler).
